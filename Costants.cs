@@ -19,6 +19,10 @@ using System.Threading.Tasks;
         /// </summary>
         public const string RootDirectory = @"\\sol.elita\Spec\.CADAutomation\Модели";
 
+
+        /// <summary>
+        /// Папка где хранятся модели серч
+        /// </summary>
         public const string RootDirectorySEARCH = @"\\sol.elita\Spec\.CADAutomation\МоделиСерч";
 
         /// <summary>
@@ -28,7 +32,7 @@ using System.Threading.Tasks;
 
 
         /// <summary>
-        /// Папка для отслеживания появления новых файлов
+        /// Папка для отслеживания появления новых файлов   
         /// </summary>
         public const string OnPerfFilePath = @"\\sol.elita\Spec\.CADAutomation\ЗадачиНаВыполнение";
 

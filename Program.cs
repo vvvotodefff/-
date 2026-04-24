@@ -150,8 +150,7 @@ namespace ВыполнитьЗадачиSolidWorks
 
             else if (e.FullPath.Contains("НаСерч") && e.FullPath.Contains(".xlsx"))
             {
-                KillSelectedProcesses(officeNames);
-                KillSelectedProcesses(solidNames);
+                //KillSelectedProcesses(solidNames);
                 RunWithTimeout(
                 () => SolidWorksManager.swApp,  // Инициализация SolidWorks
                 swApp => CreateDrawingAndModel(e.FullPath), // Вызов метода с параметрами

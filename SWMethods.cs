@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices.ComTypes;
 using System.Collections;
 using System.Xml.Linq;
+using SaveAsDWG;
 
 namespace ЗавестиАнтарус
 {
@@ -155,6 +156,7 @@ namespace ЗавестиАнтарус
                     // Если SolidWorks не запущен, создаем новый экземпляр
                     Type swType = Type.GetTypeFromProgID("SldWorks.Application");
                     app = (ISldWorks)Activator.CreateInstance(swType);
+                    app.UserControl = true;
                     // Если необходимо, можно добавить задержку для полной инициализации
                 }
                 return app;
@@ -425,9 +427,11 @@ namespace ЗавестиАнтарус
             DrawingPath = Path.Combine(Path.GetDirectoryName(ModelPath), Path.GetFileNameWithoutExtension(ModelPath) + ".SLDDRW");
             swModel.ShowConfiguration("Установка");
             swModel.ForceRebuild3(false);
-            ModelDoc2 swModelSAT = swApp.OpenDoc6(OpenPathSAT, (int)swDocumentTypes_e.swDocASSEMBLY, 1, "", 0, 0);
-            ExportToSat(swApp, OpenPathSAT, FinalFolder);
-            swApp.CloseDoc(OpenPathSAT);
+            string NewFile = $@"{FinalFolder}\3D {Path.GetFileName(FinalFolder)}.IGES";
+            SaveAsDwgRunner.Run(swApp, new[] { NewFile });
+            //ModelDoc2 swModelSAT = swApp.OpenDoc6(OpenPathSAT, (int)swDocumentTypes_e.swDocASSEMBLY, 1, "", 0, 0);
+            //ExportToSat(swApp, OpenPathSAT, FinalFolder);
+            //swApp.CloseDoc(OpenPathSAT);
         }
 
         /// <summary>
