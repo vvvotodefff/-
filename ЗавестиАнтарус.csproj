@@ -81,7 +81,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="SaveAsDWG">
       <HintPath>\\sol.elita\Spec\.CADAutomation\.ПрограммыSW\SaveAsDWG\SaveAsDWG.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SolidWorks.Interop.sldworks">
       <HintPath>..\..\Program Files\SOLIDWORKS Corp\SOLIDWORKS\SolidWorks.Interop.sldworks.dll</HintPath>
