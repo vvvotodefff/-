@@ -34,53 +34,72 @@ namespace VZU
         /// <param name="filepath">Путь до файла с параметра</param>
         public static void VZUCreateDWG(string filepath)
         {
-            // Подготовка путей и кода
-            var code = CreateFinalPath(filepath);
-            var name = Path.GetFileName(filepath)?.ToLower() ?? "";
-            var baseDir = $@"\\sol.elita\Spec\.CADAutomation\Модели\ВЗУ\{code}";
-            string finalPath;
-
-            // Запускаем AutoCAD
-            acad = new AcadApplication();
-            Thread.Sleep(1000);
-            acad.Visible = true;
-
-            // Если это чертеж — обрабатываем множество файлов
-            if (name.Contains("чертежвзу"))
+            try
             {
-                var targetFiles = ReadWriteParametersVZUDrawing(filepath);
-                for (int i = 0; i < targetFiles.Length; i++)
+                // Подготовка путей и кода
+                var code = CreateFinalPath(filepath);
+                var name = Path.GetFileName(filepath)?.ToLower() ?? "";
+                var baseDir = $@"\\sol.elita\Spec\.CADAutomation\Модели\ВЗУ\{code}";
+                string finalPath;
+
+                // Запускаем AutoCAD
+                acad = new AcadApplication();
+                Thread.Sleep(1000);
+                acad.Visible = true;
+
+                // Если это чертеж — обрабатываем множество файлов
+                if (name.Contains("чертежвзу"))
                 {
-                    var suffix = targetFiles.Length == 1
-                        ? $"{code}. ЧертежВЗУ.pdf"
-                        : $"{code} ({i + 1}). ЧертежВЗУ.pdf";
+                    var targetFiles = ReadWriteParametersVZUDrawing(filepath);
+                    for (int i = 0; i < targetFiles.Length; i++)
+                    {
+                        var suffix = targetFiles.Length == 1
+                            ? $"{code}. ЧертежВЗУ.pdf"
+                            : $"{code} ({i + 1}). ЧертежВЗУ.pdf";
 
-                    finalPath = Path.Combine(baseDir, suffix);
-                    CreateVZU(targetFiles[i], finalPath);
+                        finalPath = Path.Combine(baseDir, suffix);
+                        CreateVZU(targetFiles[i], finalPath);
+                    }
+                    return;
                 }
-                return;
+
+
+                var map = new Dictionary<string, (string pdfName, string dwgPath)>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["фундамент"] = ($"{code}. ЗаданиеНаФундаментВЗУ.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\ЗаданиеНаФундамент.DWG"),
+                    ["спецификация"] = ($"{code}. СпецификацияВЗУ.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\Спецификация.DWG"),
+                    ["принципиалка взу 1,2 кат, вентиляция"] = ($"{code}. Принципиалка взу 1,2 кат, вентиляция.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\принципиалка взу 1,2 кат, вентиляция.DWG"),
+                    ["принципиалка взу 1,2 кат"] = ($"{code}. Принципиалка взу 1,2 кат.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\принципиалка взу 1,2 кат.DWG"),
+                    ["принципиалка взу 3 кат, вентиляция"] = ($"{code}. Принципиалка взу 3 кат, вентиляция.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\принципиалка взу 3 кат, вентиляция.DWG"),
+                    ["принципиалка взу 3 кат"] = ($"{code}. принципиалка взу 3 кат.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\принципиалка взу 3 кат.DWG")
+                };
+
+                // Находим первое совпадение по ключу
+                var entry = map.FirstOrDefault(kvp => name.Contains(kvp.Key));
+                if (entry.Key != null)
+                {
+                    finalPath = Path.Combine(baseDir, entry.Value.pdfName);
+                    if (File.Exists(finalPath))
+                        File.Delete(finalPath);
+
+                    CreatePDFFileVZU(entry.Value.dwgPath, filepath, finalPath);
+                    return;
+                }
+
+                throw new InvalidOperationException("Неизвестный тип задания ВЗУ: " + filepath);
             }
-
-
-            var map = new Dictionary<string, (string pdfName, string dwgPath)>(StringComparer.OrdinalIgnoreCase)
+            finally
             {
-                ["фундамент"] = ($"{code}. ЗаданиеНаФундаментВЗУ.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\ЗаданиеНаФундамент.DWG"),
-                ["спецификация"] = ($"{code}. СпецификацияВЗУ.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\Спецификация.DWG"),
-                ["принципиалка взу 1,2 кат, вентиляция"] = ($"{code}. Принципиалка взу 1,2 кат, вентиляция.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\принципиалка взу 1,2 кат, вентиляция.DWG"),
-                ["принципиалка взу 1,2 кат"] = ($"{code}. Принципиалка взу 1,2 кат.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\принципиалка взу 1,2 кат.DWG"),
-                ["принципиалка взу 3 кат, вентиляция"] = ($"{code}. Принципиалка взу 3 кат, вентиляция.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\принципиалка взу 3 кат, вентиляция.DWG"),
-                ["принципиалка взу 3 кат"] = ($"{code}. принципиалка взу 3 кат.pdf", @"\\sol.elita\Spec\.CADAutomation\ВЗУ\принципиалка взу 3 кат.DWG")
-            };
-
-            // Находим первое совпадение по ключу
-            var entry = map.FirstOrDefault(kvp => name.Contains(kvp.Key));
-            if (entry.Key != null)
-            {
-                finalPath = Path.Combine(baseDir, entry.Value.pdfName);
-                if (File.Exists(finalPath))
-                    File.Delete(finalPath);
-
-                CreatePDFFileVZU(entry.Value.dwgPath, filepath, finalPath);
+                if (acad != null)
+                {
+                    try { acad.Quit(); }
+                    catch (System.Exception ex) { Log("Не удалось закрыть AutoCAD: " + ex.Message); }
+                    finally
+                    {
+                        try { Marshal.FinalReleaseComObject(acad); } catch { }
+                        acad = null;
+                    }
+                }
             }
         }
 
@@ -91,23 +110,35 @@ namespace VZU
         /// <param name="finalpath">Путь до финального файла</param>
         static void CreateVZU(string pathfile, string finalpath)
         {
+            AcadDocument doc = null;
+            bool closed = false;
             try
             {
-                AcadDocument doc = acad.Documents.Open(pathfile);
+                doc = acad.Documents.Open(pathfile);
 
                 doc.SendCommand("_DATALINKUPDATE\n_u\n_k\n");
                 Thread.Sleep(2000);
                 PlotWait.PlotToPdfAndWait(acad, doc, finalpath);
                 PdfCloser.ClosePdfWindowByTitle(finalpath, TimeSpan.FromSeconds(10));
-                acad.ActiveDocument.Close(true);
+                doc.Close(true);
+                closed = true;
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine("Ошибка: " + ex.Message);
+                Log($"Ошибка создания ВЗУ из {pathfile}: {ex}");
+                throw;
             }
             finally
             {
-                acad.Quit();
+                if (doc != null)
+                {
+                    if (!closed)
+                    {
+                        try { doc.Close(false); } catch { }
+                    }
+
+                    try { Marshal.FinalReleaseComObject(doc); } catch { }
+                }
             }
 
         }
@@ -380,11 +411,15 @@ namespace VZU
         static void CreatePDFFileVZU(string file, string filepath, string finalpath)
         {
             var result = ReadParameters(filepath, '=');
-            AcadDocument doc = acad.Documents.Open(file);
-            doc.SendCommand("_DATALINKUPDATE\n_u\n_k\n");
-            Thread.Sleep(2000);
+            AcadDocument doc = null;
+            bool closed = false;
+
             try
             {
+                doc = acad.Documents.Open(file);
+                doc.SendCommand("_DATALINKUPDATE\n_u\n_k\n");
+                Thread.Sleep(2000);
+
                 foreach (var kvp in result)
                 {
                     string baseValue = kvp.Key;
@@ -396,14 +431,24 @@ namespace VZU
                 PdfCloser.ClosePdfWindowByTitle(finalpath, TimeSpan.FromSeconds(10));
 
                 doc.Close(false);
+                closed = true;
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine("Ошибка: " + ex.Message);
+                Log($"Ошибка создания PDF ВЗУ из {file}: {ex}");
+                throw;
             }
             finally
             {
-                acad.Quit();
+                if (doc != null)
+                {
+                    if (!closed)
+                    {
+                        try { doc.Close(false); } catch { }
+                    }
+
+                    try { Marshal.FinalReleaseComObject(doc); } catch { }
+                }
             }
         }
     }
