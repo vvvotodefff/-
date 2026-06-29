@@ -66,12 +66,12 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop">
-      <HintPath>$(LocalAssembliesDir)\Autodesk.AutoCAD.Interop.dll</HintPath>
+      <HintPath>..\..\Program Files\Autodesk\AutoCAD 2025\Autodesk.AutoCAD.Interop.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop.Common">
-      <HintPath>$(LocalAssembliesDir)\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
+      <HintPath>..\..\Program Files\Autodesk\AutoCAD 2025\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <Private>False</Private>
     </Reference>
@@ -93,17 +93,17 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>$(LocalAssembliesDir)\SolidWorks.Interop.sldworks.dll</HintPath>
+      <HintPath>..\..\Program Files\SOLIDWORKS Corp\SOLIDWORKS\SolidWorks.Interop.sldworks.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <Private>False</Private>
     </Reference>
     <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>$(LocalAssembliesDir)\SolidWorks.Interop.swcommands.dll</HintPath>
+      <HintPath>..\..\Program Files\SOLIDWORKS Corp\SOLIDWORKS\SolidWorks.Interop.swcommands.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <Private>False</Private>
     </Reference>
     <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>$(LocalAssembliesDir)\SolidWorks.Interop.swconst.dll</HintPath>
+      <HintPath>..\..\Program Files\SOLIDWORKS Corp\SOLIDWORKS\SolidWorks.Interop.swconst.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <Private>False</Private>
     </Reference>

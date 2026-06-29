@@ -191,11 +191,11 @@ using System.Threading;
         /// <returns></returns>
         public static string GetCodeFromFileName(string fileName)
         {
-            Match match = Regex.Match(fileName, @"^\d+");
+            Match match = Regex.Match(fileName, @"^[^.]+");
             return match.Success ? match.Value : string.Empty;
         }
 
-        public static Dictionary<string, string> GetKeyValue(string filepath)
+    public static Dictionary<string, string> GetKeyValue(string filepath)
         {
             Dictionary<string,string> keyValuePairs = new Dictionary<string,string>();
             foreach (var key in File.ReadLines(filepath)) 
